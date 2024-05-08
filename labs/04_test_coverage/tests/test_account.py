@@ -53,3 +53,20 @@ class TestAccountModel(TestCase):
         account.create()
         self.assertEqual(len(Account.all()), 1)
 
+    def test_repr(self):
+        """Test self"""
+        account = Account(name="Test Account")
+        expected_repr = '<Account \'Test Account\'>'  # Escape the single quote
+
+        self.assertEqual(repr(account), expected_repr)
+
+    def test_to_dict(self):
+        """ Test account to dict """
+        data = ACCOUNT_DATA[self.rand] # get a random account
+        account = Account(**data)
+        result = account.to_dict()
+        self.assertEqual(account.name, result["name"])
+        self.assertEqual(account.email, result["email"])
+        self.assertEqual(account.phone_number, result["phone_number"])
+        self.assertEqual(account.disabled, result["disabled"])
+        self.assertEqual(account.date_joined, result["date_joined"])
