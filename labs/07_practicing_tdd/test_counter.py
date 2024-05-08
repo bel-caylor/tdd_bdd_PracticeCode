@@ -25,3 +25,35 @@ class CounterTest(TestCase):
         self.assertEqual(result.status_code, status.HTTP_201_CREATED)
         result = self.client.post("/counters/bar")
         self.assertEqual(result.status_code, status.HTTP_409_CONFLICT)
+
+    def test_update_a_counter(self):
+        """It should increment the counter"""
+        result = self.client.post("/counters/baz")
+        self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+        data = result.get_json()
+        baseline = data["baz"]
+        # Update the counter
+        result = self.client.put("/counters/baz")
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        data = result.get_json()
+        self.assertEqual(data["baz"], baseline + 1)
+
+    def test_read_a_counter(self):
+        """It should read the counter"""
+        result = self.client.post("/counters/zet")
+        self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+        data = result.get_json()
+        baseline = data["zet"]
+        result = self.client.get("/counters/zet")
+        data = result.get_json()
+        new_value = data["zet"]
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        self.assertEqual(new_value, baseline)
+        
+    def test_delete_a_counter(self):
+        """It should delete the counter"""
+        result = self.client.post("/counters/fob")
+        self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+        # Delete the counter
+        result = self.client.delete("/counters/fob")
+        self.assertEqual(result.status_code, status.HTTP_204_NO_CONTENT)   
